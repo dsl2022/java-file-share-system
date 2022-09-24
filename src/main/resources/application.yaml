@@ -1,0 +1,15 @@
+spring:
+    jpa:
+        generate-ddl: false
+        database-platform: org.hibernate.dialect.MySQLDialect
+        show-sql: true
+    datasource:
+        url: jdbc:mysql://localhost/filesync
+        username: root
+        password: 12345678
+    redis:
+        url: redis://127.0.0.1:6379
+logging:
+    level:
+        org.springframework.web: DEBUG
+        org.springframework.security: DEBUG
