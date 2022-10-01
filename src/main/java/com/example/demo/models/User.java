@@ -1,21 +1,23 @@
 package com.example.demo.models;
-
+ // Serializable is only good for Java project
+//import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import lombok.Data;
+import org.springframework.web.server.session.DefaultWebSessionManager;
 
 @Entity
 public class User {
+//public class User implements Serializable {
+//	private static final long serialVersionUID = -7299940417667088078L;
 	@Id
 	private Integer id;
 	private String firstName;
 	private String lastName;
 	private String email;
-	private String username;
-	
+	private String username;	
 	
 	public Integer getId() {
 		return id;

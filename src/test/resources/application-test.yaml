@@ -9,3 +9,9 @@ spring:
         password: 12345678
     redis:
         url: 127.0.0.1:6379
+    rabbitmq:
+        username: dev
+        password: 1234567
+        host: localhost
+        virtualHost: /filesync
+        port: 5672
