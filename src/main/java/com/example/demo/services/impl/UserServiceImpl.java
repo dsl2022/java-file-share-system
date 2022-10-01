@@ -23,28 +23,36 @@ public class UserServiceImpl implements UserService {
 	@Override
 	@Transactional
 	@CachePut(value="user", key = "T(String).valueOf(#user.id)")
-	public String addUser(User user) {
+	public User addUser(User user) {
 		logger.info("test if cache write is hit");
 		Optional<User> searchUser = userRepository.findById(user.getId());		
 		if(searchUser.isEmpty()) {
 			userRepository.save(user);
-			return "User is added";
+			return user;
 		}		
-		return "User existed";
+		return  null;
 	}
 
 	@Override
-	@Cacheable(value = "user", key = "T(String).valueOf(#user.id)")
-	public Optional<User> getUserById(Integer id) {
-		logger.info("test if cache read is hit");
+	@Cacheable(value = "user", key = "T(String).valueOf(#id)")
+	public User getUserById(Integer id) {
+		logger.info("test if cache read is not hit");
 		Optional<User> searchUser = userRepository.findById(id);
 		
-		return searchUser;
+		if(searchUser.isPresent()) {
+			return searchUser.get();
+		}else {
+			// refactor this, cache does not like null and if adding same user again it will fail.  
+			return null;
+		}
+		
 	}
 
 	@Override
-	public List<User> getAllUsers() {		
-		return (List<User>) userRepository.findAll();
+	@Cacheable(value = "user", key="{#lastName}")
+	public List<User> getUsers(String lastName) {		
+		logger.info("load from db");
+		return (List<User>) userRepository.findUsersByLastName(lastName);
 	}
 	// for update and delete	
 	//	@CacheEvict(value="user",key = "T(String).valueOf(#user.id)")

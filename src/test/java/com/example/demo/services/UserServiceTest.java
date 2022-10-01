@@ -29,14 +29,14 @@ public class UserServiceTest {
         user.setLastName("Philip");
         user.setUsername("ddl");
         userService.addUser(user);        
-        Optional<User> testUser = userService.getUserById(user.getId());
-        assertTrue(testUser.isPresent());
-        assertEquals(testUser.get(), user);
+        User testUser = userService.getUserById(user.getId());
+        assertTrue(testUser!=null);
+        assertEquals(testUser, user);
     }
 	
 	@Test
 	public void testListUser() {
-		System.out.println(userService.getAllUsers());
+		System.out.println(userService.getUsers("david"));
 		
 	};	
 }

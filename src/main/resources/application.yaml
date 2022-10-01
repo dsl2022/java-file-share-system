@@ -1,4 +1,16 @@
 spring:
+    security:
+        oauth2:
+            client:
+                registration:
+                    google:
+                        client-id: 1038880691615-2hkei3le1fvvshe38ggk4lgrogpjtill.apps.googleusercontent.com
+                        client-secret: f_qBXWYTkRHC3FWb-sPtSSxj
+#    security:
+#        user:
+#            name: demo
+#            password: 12345
+        
     jpa:
         generate-ddl: false
         database-platform: org.hibernate.dialect.MySQLDialect
@@ -9,7 +21,23 @@ spring:
         password: 12345678
     redis:
         url: redis://127.0.0.1:6379
+    cache:
+        redis:
+            time-to-live: 600000
+    rabbitmq:
+        username: dev
+        password: 1234567
+        host: localhost
+        virtualHost: /filesync
+        port: 5672
 logging:
     level:
         org.springframework.web: DEBUG
         org.springframework.security: DEBUG
+
+config:
+    amqp:
+        queue:
+            filesync: filesync
+        exchange: file
+            
