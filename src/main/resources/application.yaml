@@ -6,10 +6,13 @@ spring:
                     google:
                         client-id: 1038880691615-2hkei3le1fvvshe38ggk4lgrogpjtill.apps.googleusercontent.com
                         client-secret: f_qBXWYTkRHC3FWb-sPtSSxj
-#    security:
-#        user:
-#            name: demo
-#            password: 12345
+                    github:
+                        client-id: 818e0475fe72c4574040
+                        client-secret: a781432f245a9ffa5834d7fb728c12d1aaffe191
+#                        scope: read:user,public_repo                    
+        user:
+            name: demo
+            password: 12345
         
     jpa:
         generate-ddl: false
@@ -30,6 +33,11 @@ spring:
         host: localhost
         virtualHost: /filesync
         port: 5672
+#auth:
+#    openid:
+#        google:
+#            client-id: 1038880691615-2hkei3le1fvvshe38ggk4lgrogpjtill.apps.googleusercontent.com
+#            client-secret: f_qBXWYTkRHC3FWb-sPtSSxj
 logging:
     level:
         org.springframework.web: DEBUG

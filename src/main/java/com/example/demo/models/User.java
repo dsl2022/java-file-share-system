@@ -17,7 +17,8 @@ public class User {
 	private String firstName;
 	private String lastName;
 	private String email;
-	private String username;	
+	private String username;
+	private String password;
 	
 	public Integer getId() {
 		return id;
@@ -65,6 +66,12 @@ public class User {
 		return Objects.equals(email, other.email) && Objects.equals(firstName, other.firstName)
 				&& Objects.equals(id, other.id) && Objects.equals(lastName, other.lastName)
 				&& Objects.equals(username, other.username);
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
 }

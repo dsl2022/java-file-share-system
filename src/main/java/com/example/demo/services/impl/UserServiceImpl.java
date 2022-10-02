@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +21,18 @@ public class UserServiceImpl implements UserService {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private PasswordEncoder passwordEncoder; 
 	@Override
 	@Transactional
 	@CachePut(value="user", key = "T(String).valueOf(#user.id)")
 	public User addUser(User user) {
 		logger.info("test if cache write is hit");
+		
 		Optional<User> searchUser = userRepository.findById(user.getId());		
 		if(searchUser.isEmpty()) {
+			 String password = user.getPassword();			
+			user.setPassword(passwordEncoder.encode(password));
 			userRepository.save(user);
 			return user;
 		}		
@@ -45,7 +51,6 @@ public class UserServiceImpl implements UserService {
 			// refactor this, cache does not like null and if adding same user again it will fail.  
 			return null;
 		}
-		
 	}
 
 	@Override

@@ -17,18 +17,18 @@ import com.example.demo.services.UserService;
 public class UserController {
 	@Autowired
 	private UserService userService; 
-	@PostMapping("/adduser")
+	@PostMapping("/api/adduser")
 	public String addUser(@RequestBody User user){
 		if(userService.addUser(user)!=null) {
 			return "User is added";
 		}
 		return "User exists";	 
 	}
-	@GetMapping("/getuser/{id}")
+	@GetMapping("/api/getuser/{id}")
 	public User getUserById(@PathVariable Integer id){			
 			 return userService.getUserById(id);
 	}
-	@GetMapping("/getusers")
+	@GetMapping("/api/getusers")
 	public List<User> getUsers(@RequestParam String lastName){
 		return userService.getUsers(lastName);
 	}
