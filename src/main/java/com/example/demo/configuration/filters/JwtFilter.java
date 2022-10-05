@@ -6,6 +6,8 @@ import com.example.demo.utils.JWTUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,11 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+
 @Component
 public class JwtFilter implements WebFilter {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -36,9 +43,14 @@ public class JwtFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         return requiresAuthenticationMatcher.matches(exchange)
                 .filter(matchResult -> matchResult.isMatch())
+                .doOnNext(res -> logger.trace("After matchResult {}", String.valueOf(res)))
                 .flatMap(matchResult -> check(exchange))
+                .doOnNext(res -> logger.trace("After check {}", String.valueOf(res)))
                 .switchIfEmpty(chain.filter(exchange).then(Mono.empty()))
-                .flatMap(authentication -> authenticate(exchange, chain, authentication));
+                .doOnNext(res -> logger.trace("After switchIfEmpty {}", String.valueOf(res)))
+                .flatMap(authentication -> authenticate(exchange, chain, authentication))
+                .doOnNext(res -> logger.trace("After authenticate {}", String.valueOf(res)));
+
     }
 
     private Mono<Void> authenticate(ServerWebExchange exchange, WebFilterChain chain, Authentication authentication) {
@@ -60,15 +72,18 @@ public class JwtFilter implements WebFilter {
 
     private Mono<Authentication> check(ServerWebExchange exchange) {
         String clientToken = exchange.getRequest().getHeaders().getFirst("Authorization");
-        if(clientToken==null || clientToken.equals("")){
-            return Mono.empty();
+        logger.trace("Token {}", clientToken);
+        if (clientToken != null && !clientToken.equals("")) {
+            Optional<JwtUserPayload> jwtUserPayload = JWTUtils.parseToken(clientToken);
+            if (jwtUserPayload.isPresent() && userService.verify(jwtUserPayload.get())) {
+                Authentication authentication = new UsernamePasswordAuthenticationToken(jwtUserPayload, null, AuthorityUtils.createAuthorityList("USER"));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                return Mono.just(authentication);
+            }
         }
-        JwtUserPayload jwtUserPayload = JWTUtils.parseToken(clientToken);
-        if (userService.verify(jwtUserPayload)) {
-            Authentication authentication = new UsernamePasswordAuthenticationToken(jwtUserPayload, null, AuthorityUtils.createAuthorityList("USER"));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return Mono.just(authentication);
-        }
-        return Mono.empty();
+        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        AnonymousAuthenticationToken anonymousAuthenticationToken = new AnonymousAuthenticationToken("anonymous", "anonymous", AuthorityUtils.createAuthorityList("USER"));
+        anonymousAuthenticationToken.setAuthenticated(false);
+        return Mono.just(anonymousAuthenticationToken);
     }
 }

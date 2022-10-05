@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.web.server.session.DefaultWebSessionManager;
 
 @Entity
@@ -18,6 +19,7 @@ public class User {
 	private String lastName;
 	private String email;
 	private String username;
+	@JsonIgnore
 	private String password;
 	
 	public Integer getId() {

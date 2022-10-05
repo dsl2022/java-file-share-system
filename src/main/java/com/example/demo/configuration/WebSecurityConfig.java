@@ -48,10 +48,11 @@ public class WebSecurityConfig {
                 .csrf().disable()
                 .authorizeExchange()
                 .pathMatchers("/actuator/**").hasRole("ACTUATOR")
-                .pathMatchers("/api/**")
+                .pathMatchers("/api/**","/public/api/**")
                 .permitAll()
-                .pathMatchers("/public/api/**").permitAll()
+//                .pathMatchers("/public/api/**").permitAll()
                 .and().addFilterAt(filter, SecurityWebFiltersOrder.AUTHENTICATION)
+
 //                .formLogin()
 //                .and()
 //                .oauth2Login()
