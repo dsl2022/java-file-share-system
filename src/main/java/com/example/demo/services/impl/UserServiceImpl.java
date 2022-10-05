@@ -3,8 +3,10 @@ package com.example.demo.services.impl;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.dto.JwtUserPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -58,6 +60,19 @@ public class UserServiceImpl implements UserService {
 	public List<User> getUsers(String lastName) {		
 		logger.info("load from db");
 		return (List<User>) userRepository.findUsersByLastName(lastName);
+	}
+
+	@Override
+	public boolean verify(JwtUserPayload jwtUserPayload) {
+		User foundUser = getUserById(jwtUserPayload.getId());
+		if(foundUser != null){
+			User tempUser = new User();
+			BeanUtils.copyProperties(jwtUserPayload,tempUser);
+			tempUser.setFirstName(foundUser.getFirstName());
+			tempUser.setLastName(foundUser.getLastName());
+			return tempUser.equals(foundUser);
+		}
+		return false;
 	}
 	// for update and delete	
 	//	@CacheEvict(value="user",key = "T(String).valueOf(#user.id)")

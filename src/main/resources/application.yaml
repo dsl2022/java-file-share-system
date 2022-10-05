@@ -12,7 +12,7 @@ spring:
 #                        scope: read:user,public_repo                    
         user:
             name: demo
-            password: 12345
+            password: $2a$10$avMRRaZS9U68VIqj50OjV.wjdE.xWHRkJ781m3hzqOZA96gtQc1.2
         
     jpa:
         generate-ddl: false
@@ -40,8 +40,9 @@ spring:
 #            client-secret: f_qBXWYTkRHC3FWb-sPtSSxj
 logging:
     level:
-        org.springframework.web: DEBUG
-        org.springframework.security: DEBUG
+        org.springframework.web: INFO
+        org.springframework.security: INFO
+        com.example.demo: TRACE
 
 config:
     amqp:
