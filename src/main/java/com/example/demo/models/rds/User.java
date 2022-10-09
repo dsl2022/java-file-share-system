@@ -1,4 +1,4 @@
-package com.example.demo.models;
+package com.example.demo.models.rds;
  // Serializable is only good for Java project
 //import java.io.Serializable;
 import java.util.Objects;
@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.web.server.session.DefaultWebSessionManager;
 
 @Entity
 public class User {

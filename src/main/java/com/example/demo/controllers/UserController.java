@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.models.User;
+import com.example.demo.models.rds.User;
 import com.example.demo.services.UserService;
 
 @RestController

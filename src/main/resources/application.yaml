@@ -1,4 +1,7 @@
 spring:
+    data:
+        mongodb:
+            uri: mongodb+srv://admin:admin@cluster0.k11gnzj.mongodb.net/file-sync?retryWrites=true&w=majority
     security:
         oauth2:
             client:

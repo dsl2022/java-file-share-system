@@ -1,27 +1,18 @@
 package com.example.demo.services.impl;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.dto.JwtUserPayload;
 import com.example.demo.dto.LoginDto;
 import com.example.demo.services.AuthService;
 import com.example.demo.utils.JWTUtils;
-import com.example.demo.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.models.User;
-import com.example.demo.repositories.UserRepository;
-import com.example.demo.services.UserService;
+import com.example.demo.models.rds.User;
+import com.example.demo.repositories.jpa.UserRepository;
 
 @Service
 public class AuthServiceImpl implements AuthService {

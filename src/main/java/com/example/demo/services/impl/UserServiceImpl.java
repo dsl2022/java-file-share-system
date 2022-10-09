@@ -14,8 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.models.User;
-import com.example.demo.repositories.UserRepository;
+import com.example.demo.models.rds.User;
+import com.example.demo.repositories.jpa.UserRepository;
 import com.example.demo.services.UserService;
 
 @Service
