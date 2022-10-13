@@ -1,9 +1,12 @@
 package com.example.demo.services.impl;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.dto.JwtUserPayload;
+import com.example.demo.exceptions.DuplicateException;
+import com.example.demo.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -30,15 +33,21 @@ public class UserServiceImpl implements UserService {
 	@CachePut(value="user", key = "T(String).valueOf(#user.id)")
 	public User addUser(User user) {
 		logger.info("test if cache write is hit");
-		
+
 		Optional<User> searchUser = userRepository.findById(user.getId());		
 		if(searchUser.isEmpty()) {
 			 String password = user.getPassword();			
 			user.setPassword(passwordEncoder.encode(password));
 			userRepository.save(user);
+			try {
+				logger.info(JsonUtil.stringify(user,User.class));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			return user;
-		}		
-		return  null;
+		}
+		logger.error("User already exists");
+		throw new DuplicateException("Your account is ready");
 	}
 
 	@Override

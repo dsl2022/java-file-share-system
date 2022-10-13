@@ -75,7 +75,7 @@ public class JsonUtil {
         mapper.registerModule(new JavaTimeModule());
         return mapper.writeValueAsString(t);
     }
-    public static <T> String convertToString(T t, Class<T> classType) throws IOException {
+    public static <T> String stringify(T t, Class<T> classType) throws IOException {
         return  convertToString(t, classType, false);
     }
 }

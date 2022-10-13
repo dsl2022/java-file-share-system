@@ -20,21 +20,21 @@ public class UserServiceTest {
 	private UserService userService;
 	@Test
     public void testList(){
-        User user = new User();        
+        User user = new User();
         user.setId(1);
         user.setEmail("ayden.franklin@test.com");
         user.setFirstName("John");
         user.setLastName("Philip");
         user.setUsername("ddl");
-        userService.addUser(user);        
+        userService.addUser(user);
         User testUser = userService.getUserById(user.getId());
         assertTrue(testUser!=null);
         assertEquals(testUser, user);
     }
-	
+
 	@Test
 	public void testListUser() {
 		System.out.println(userService.getUsers("david"));
-		
-	};	
+
+	};
 }

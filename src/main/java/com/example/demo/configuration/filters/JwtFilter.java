@@ -76,7 +76,8 @@ public class JwtFilter implements WebFilter {
         if (clientToken != null && !clientToken.equals("")) {
             Optional<JwtUserPayload> jwtUserPayload = JWTUtils.parseToken(clientToken);
             if (jwtUserPayload.isPresent() && userService.verify(jwtUserPayload.get())) {
-                Authentication authentication = new UsernamePasswordAuthenticationToken(jwtUserPayload, null, AuthorityUtils.createAuthorityList("USER"));
+                //jwtUserPayload.get(), use .get because jwtUserPayload is optiona.
+                Authentication authentication = new UsernamePasswordAuthenticationToken(jwtUserPayload.get(), null, AuthorityUtils.createAuthorityList("USER"));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 return Mono.just(authentication);
             }
