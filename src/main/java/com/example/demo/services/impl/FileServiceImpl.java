@@ -35,12 +35,12 @@ public class FileServiceImpl<fileRepository> implements FileService {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private FileRepository fileRepository;
-    @Value("${storage.local.path:/tmp/demo")
+    @Value("${storage.local.path:/tmp/demo}")
     private String directory;
 
-    @Value("storage.aws.region:us-east-1")
+    @Value("${storage.aws.region:us-east-1}")
     private String region;
-    @Value("storage.aws.bucket:file-sync-bucket")
+    @Value("${storage.aws.bucket:file-sync-project}")
     private String bucket;
 
     private S3Client s3;
@@ -77,11 +77,11 @@ public class FileServiceImpl<fileRepository> implements FileService {
                     return newFile.map(file -> {
                         String key = userId.toString() + RandomUtil.generateRandomString(10);
                         PutObjectResponse response = s3.putObject(PutObjectRequest.builder().bucket(bucket).key(key).build(), RequestBody.fromFile(file));
-
                         Map<String, String> map = new HashMap<>();
                                 map.put("name", file.getName());
                                 map.put("key", key);
                                 map.put("eTag", response.eTag());
+
                                 map.put("url", String.format("https://%s.s3.%s.amazonaws.com/%s", bucket,region,key));
                                 return map;
                             });
