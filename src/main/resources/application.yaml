@@ -48,6 +48,9 @@ logging:
         com.example.demo: DEBUG
 
 config:
+    id:
+        snowflake:
+            enabled: true
     amqp:
         queue:
             filesync: filesync

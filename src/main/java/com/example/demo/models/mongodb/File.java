@@ -9,7 +9,7 @@ import java.util.List;
 @Document
 @Data
 public class File {
-    private Integer id;
+    private long id;
     private Integer userId;
     private String key;
     private String url;

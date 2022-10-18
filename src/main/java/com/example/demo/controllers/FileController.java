@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 import com.example.demo.dto.JwtUserPayload;
+import com.example.demo.models.mongodb.File;
 import com.example.demo.models.rds.User;
 import com.example.demo.services.FileService;
 import org.slf4j.Logger;
@@ -10,10 +11,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+
+import java.util.Optional;
 
 @RestController
 public class FileController {
@@ -36,6 +40,12 @@ public class FileController {
 //			logger.error(e.getMessage());
 //			return e.getMessage();
 //		}
+
+	}
+
+	@GetMapping("/api/files")
+	public Flux<File> listFiles(Authentication auth){
+	return fileService.find(1, Optional.empty());
 
 	}
 }

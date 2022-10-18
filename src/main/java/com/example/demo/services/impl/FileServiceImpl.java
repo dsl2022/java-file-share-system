@@ -4,6 +4,7 @@ import com.example.demo.exceptions.StorageException;
 import com.example.demo.models.mongodb.File;
 import com.example.demo.repositories.mongodb.FileRepository;
 import com.example.demo.services.FileService;
+import com.example.demo.services.IdGenerator;
 import com.example.demo.utils.RandomUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+
 public class FileServiceImpl<fileRepository> implements FileService {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
@@ -42,7 +44,8 @@ public class FileServiceImpl<fileRepository> implements FileService {
     private String region;
     @Value("${storage.aws.bucket:file-sync-project}")
     private String bucket;
-
+    @Autowired
+    private IdGenerator idGenerator;
     private S3Client s3;
 
     @PostConstruct
@@ -97,7 +100,7 @@ public class FileServiceImpl<fileRepository> implements FileService {
             String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
             file.setFileName(fileName);
             //TODO implement twitter snowflake id generation
-            file.setId(1);
+            file.setId(idGenerator.nextId());
             file.setTags(Arrays.asList("lifestyle", "travel"));
             file.setKey(map.get("key"));
             file.setUrl(map.get("url"));
@@ -119,7 +122,8 @@ public class FileServiceImpl<fileRepository> implements FileService {
     }
 
     @Override
-    public Flux<String> find(Integer userId, Optional<String> tag) {
-        return null;
+    public Flux<File> find(Integer userId, Optional<String> tag) {
+//     todo implement user id for filter later
+        return fileRepository.findAll();
     }
 }
