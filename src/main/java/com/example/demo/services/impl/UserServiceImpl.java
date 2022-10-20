@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.demo.dto.JwtUserPayload;
+import com.example.demo.dto.RegisterDto;
 import com.example.demo.exceptions.DuplicateException;
+import com.example.demo.services.IdGenerator;
 import com.example.demo.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,26 +27,35 @@ import com.example.demo.services.UserService;
 public class UserServiceImpl implements UserService {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
+	private IdGenerator idGenerator;
+	@Autowired
 	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder; 
 	@Override
 	@Transactional
-	@CachePut(value="user", key = "T(String).valueOf(#user.id)")
-	public User addUser(User user) {
-		logger.info("test if cache write is hit");
+//  should not use cache when adding user, only use it when reading.
+//	@CachePut(value="user", key = "T(String).valueOf(#user.id)")
 
-		Optional<User> searchUser = userRepository.findById(user.getId());		
+	public User addUser(RegisterDto registerDto) {
+		logger.info("test if cache write is hit");
+			User user = new User();
+			BeanUtils.copyProperties(registerDto,user);
+
+			user.setId(idGenerator.nextId());
+			logger.info("userid test {}",user.getId());
+		Optional<User> searchUser = userRepository.findOneByEmail(user.getEmail());
 		if(searchUser.isEmpty()) {
-			 String password = user.getPassword();			
+			 String password = registerDto.getPassword();
+			logger.info("test password {}",password);
 			user.setPassword(passwordEncoder.encode(password));
-			userRepository.save(user);
+
 			try {
 				logger.info(JsonUtil.stringify(user,User.class));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return user;
+			return userRepository.save(user);
 		}
 		logger.error("User already exists");
 		throw new DuplicateException("Your account is ready");
@@ -52,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Cacheable(value = "user", key = "T(String).valueOf(#id)")
-	public User getUserById(Integer id) {
+	public User getUserById(Long id) {
 		logger.info("test if cache read is not hit");
 		Optional<User> searchUser = userRepository.findById(id);
 		

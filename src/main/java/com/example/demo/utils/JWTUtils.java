@@ -15,7 +15,7 @@ import java.util.Optional;
 public class JWTUtils {
     private static Logger logger = LoggerFactory.getLogger(JWTUtils.class);
     private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    public static String generateToken(Integer id,String username, String email,String jwtKey) {
+    public static String generateToken(long id, String username, String email, String jwtKey) {
 //        Key key = Keys.hmacShaKeyFor(jwtKey.getBytes());
 
         logger.debug(String.valueOf(key));
@@ -28,7 +28,7 @@ public class JWTUtils {
 
 
             JwtUserPayload jwtUserPayload = new JwtUserPayload();
-            jwtUserPayload.setId(Integer.valueOf(claims.get("userId").toString()));
+            jwtUserPayload.setId(Long.valueOf(claims.get("userId").toString()));
             jwtUserPayload.setEmail(claims.get("email").toString());
             // subject is username
             jwtUserPayload.setUsername(claims.getSubject());

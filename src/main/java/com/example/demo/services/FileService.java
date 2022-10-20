@@ -5,6 +5,6 @@ import reactor.core.publisher.Flux;
 
 import java.util.Optional;
 public interface FileService {
-    Flux<String> save(Integer userId, Flux<FilePart> files);
-    Flux<File> find(Integer userId, Optional<String> tag);
+    Flux<String> save(Long userId, Flux<FilePart> files);
+    Flux<File> find(Long userId, Optional<String> tag);
 }

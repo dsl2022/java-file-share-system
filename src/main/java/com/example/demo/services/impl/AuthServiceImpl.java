@@ -24,7 +24,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(LoginDto loginDto) {
-        Optional<User> foundUser = userRepository.findUserByEmail(loginDto.getEmail());
+        Optional<User> foundUser = userRepository.findOneByEmail(loginDto.getEmail());
         if (foundUser.isPresent()) {
             User user = foundUser.get();
             passwordEncoder.matches(loginDto.getPassword(), user.getPassword());

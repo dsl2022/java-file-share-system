@@ -10,7 +10,18 @@ with [Spring Reactor]("https://projectreactor.io/docs/core/release/reference/#in
 * RabbitMQ
 * MySQL
 
+### Example users
+```
+{
+    "id":21,
+    "username":"ddl",    
+    "firstName":"David",    
+    "lastName":"D",
+    "email":"test002@gmail.com",
+    "password":"12345"
+}
 
+```
 
 ![Architectural diagram]("https://drive.google.com/file/d/14OiC0ou-4BbEEc8woH78h96z8e2eo8XC/view")
 

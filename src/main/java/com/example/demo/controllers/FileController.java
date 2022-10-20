@@ -45,7 +45,7 @@ public class FileController {
 
 	@GetMapping("/api/files")
 	public Flux<File> listFiles(Authentication auth){
-	return fileService.find(1, Optional.empty());
+	return fileService.find(((JwtUserPayload)auth.getPrincipal()).getId(), Optional.empty());
 
 	}
 }

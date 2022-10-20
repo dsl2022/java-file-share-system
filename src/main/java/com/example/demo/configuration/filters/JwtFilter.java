@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
+import org.springframework.web.server.handler.DefaultWebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
@@ -41,6 +42,8 @@ public class JwtFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        // type conversion Type Cast
+        logger.trace("test chain.toString {}",((DefaultWebFilterChain)chain).getFilters());
         return requiresAuthenticationMatcher.matches(exchange)
                 .filter(matchResult -> matchResult.isMatch())
                 .doOnNext(res -> logger.trace("After matchResult {}", String.valueOf(res)))

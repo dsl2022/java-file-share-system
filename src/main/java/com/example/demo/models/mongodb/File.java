@@ -9,8 +9,8 @@ import java.util.List;
 @Document
 @Data
 public class File {
-    private long id;
-    private Integer userId;
+    private Long id;
+    private Long userId;
     private String key;
     private String url;
     private String fileName;

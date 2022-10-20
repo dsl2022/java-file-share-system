@@ -55,7 +55,7 @@ public class FileServiceImpl<fileRepository> implements FileService {
     }
 
     @Override
-    public Flux<String> save(Integer userId, Flux<FilePart> files) {
+    public Flux<String> save(Long userId, Flux<FilePart> files) {
         return files
                 .map(filePart -> {
                     Path path = Paths.get(directory, userId.toString());
@@ -106,24 +106,22 @@ public class FileServiceImpl<fileRepository> implements FileService {
             file.setUrl(map.get("url"));
             file.setShared(false);
             file.setCreatedAt(LocalDateTime.now());
+            file.setUserId(userId);
             logger.debug("we get file {},with key {}", file.getFileName(), file.getKey());
             return file;
             // TODO to save to disk, push to s3 and to db
         }).flatMap(
-                file -> {
-                    logger.debug("we are going to save a file {} into mongodb,with key {}", file.getFileName(), file.getKey());
-                    return fileRepository.save(file);
-                }
-
-        ).map(file -> {
-            logger.debug("we have saved the file {} into mongodb,with key {}", file.getFileName(), file.getKey());
-            return file.getKey();
-        });
+                file -> fileRepository.save(file)
+//                    logger.debug("we are going to save a file {} into mongodb,with key {}", file.getFileName(), file.getKey());
+//
+        ).map(file ->
+//            logger.debug("we have saved the file {} into mongodb,with key {}", file.getFileName(), file.getKey());
+            file.getKey()
+        );
     }
 
     @Override
-    public Flux<File> find(Integer userId, Optional<String> tag) {
-//     todo implement user id for filter later
-        return fileRepository.findAll();
+    public Flux<File> find(Long userId, Optional<String> tag) {
+        return fileRepository.findByUserId(userId);
     }
 }

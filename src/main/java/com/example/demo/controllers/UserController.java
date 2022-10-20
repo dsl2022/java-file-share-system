@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
+import com.example.demo.dto.RegisterDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,14 +19,14 @@ public class UserController {
 	@Autowired
 	private UserService userService; 
 	@PostMapping("/api/adduser")
-	public String addUser(@RequestBody User user){
-		if(userService.addUser(user)!=null) {
+	public String addUser(@RequestBody RegisterDto registerDto){
+		if(userService.addUser(registerDto)!=null) {
 			return "User is added";
 		}
 		return "User exists";	 
 	}
 	@GetMapping("/api/getuser/{id}")
-	public User getUserById(@PathVariable Integer id){			
+	public User getUserById(@PathVariable Long id){
 			 return userService.getUserById(id);
 	}
 	@GetMapping("/api/getusers")

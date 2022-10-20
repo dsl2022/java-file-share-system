@@ -2,6 +2,7 @@ package com.example.demo.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.example.demo.dto.RegisterDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,16 +21,18 @@ public class UserServiceTest {
 	private UserService userService;
 	@Test
     public void testList(){
-        User user = new User();
-        user.setId(1);
-        user.setEmail("ayden.franklin@test.com");
-        user.setFirstName("John");
-        user.setLastName("Philip");
-        user.setUsername("ddl");
-        userService.addUser(user);
-        User testUser = userService.getUserById(user.getId());
+        // TODO add in memory db
+//        shift + f6 refractor variables for all occurances
+        RegisterDto registerDto = new RegisterDto();
+//        user.setId(1);
+        registerDto.setEmail("ayden.franklin@test.com");
+        registerDto.setFirstName("John");
+        registerDto.setLastName("Philip");
+        registerDto.setUsername("ddl");
+        registerDto.setPassword("12345");
+        User testUser = userService.addUser(registerDto);
         assertTrue(testUser!=null);
-        assertEquals(testUser, user);
+        assertEquals(testUser.getUsername(), registerDto.getUsername());
     }
 
 	@Test
