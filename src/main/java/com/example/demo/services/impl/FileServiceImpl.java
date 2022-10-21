@@ -26,10 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 
@@ -121,7 +118,8 @@ public class FileServiceImpl<fileRepository> implements FileService {
     }
 
     @Override
-    public Flux<File> find(Long userId, Optional<String> tag) {
-        return fileRepository.findByUserId(userId);
+    public Flux<File> find(Long userId, List<String> tags) {
+        // todo currently it is not really exactly and correctly filtering by tags, e.g. lifestyle & coding, would return records that includes cooking. we need to investigate.
+        return tags.isEmpty()? fileRepository.findByUserId(userId):fileRepository.findByUserIdAndTagsIn(userId,tags);
     }
 }

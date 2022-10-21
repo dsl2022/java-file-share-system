@@ -11,13 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class FileController {
@@ -44,8 +41,10 @@ public class FileController {
 	}
 
 	@GetMapping("/api/files")
-	public Flux<File> listFiles(Authentication auth){
-	return fileService.find(((JwtUserPayload)auth.getPrincipal()).getId(), Optional.empty());
+	public Flux<File> listFiles(Authentication auth, @RequestParam(value="tag", required=false) List<String> searchTags){
+		logger.debug("test search tags {}",searchTags);
+
+	return fileService.find(((JwtUserPayload)auth.getPrincipal()).getId(),searchTags == null? Collections.emptyList(): searchTags);
 
 	}
 }
