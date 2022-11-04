@@ -15,9 +15,7 @@ import java.util.Optional;
 public class JWTUtils {
     private static Logger logger = LoggerFactory.getLogger(JWTUtils.class);
     private static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    public static String generateToken(long id, String username, String email, String jwtKey) {
-//        Key key = Keys.hmacShaKeyFor(jwtKey.getBytes());
-
+    public static String generateToken(long id, String username, String email) {
         logger.debug(String.valueOf(key));
         return Jwts.builder().setSubject(username).claim("userId",id).claim("email",email).signWith(key,SignatureAlgorithm.HS512).compact();
     }

@@ -31,14 +31,8 @@ public class AuthServiceImpl implements AuthService {
             logger.debug("get user before if");
             if (passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
                 logger.debug("get user after if");
-// copyProperties method will be dleted afer taking note.
-                //				JwtUserPayload payload = new JwtUserPayload();
-                // copy properties from reference
-//				BeanUtils.copyProperties(user,payload);
                 logger.debug("inside try");
-                return JWTUtils.generateToken(user.getId(), user.getUsername(), user.getEmail(), "abcfdklafaalfjaflkjejlkrekljealfkj");//
-                //TODO send token back
-                // TODO define db field for email to be unique
+                return JWTUtils.generateToken(user.getId(), user.getUsername(), user.getEmail());
             }
         }
         return "failed";

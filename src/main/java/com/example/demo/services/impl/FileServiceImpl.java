@@ -1,5 +1,7 @@
 package com.example.demo.services.impl;
 
+import com.example.demo.dto.UpdateFile;
+import com.example.demo.exceptions.ItemNotFoundException;
 import com.example.demo.exceptions.StorageException;
 import com.example.demo.models.mongodb.File;
 import com.example.demo.repositories.mongodb.FileRepository;
@@ -8,11 +10,13 @@ import com.example.demo.services.IdGenerator;
 import com.example.demo.utils.RandomUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
@@ -47,6 +51,14 @@ public class FileServiceImpl<fileRepository> implements FileService {
 
     @PostConstruct
     public void init(){
+        Path path = Paths.get(directory);
+        if (Files.notExists(path)) {
+            try {
+                Files.createDirectory(path);
+            } catch (IOException e) {
+                throw new StorageException(e);
+            }
+        }
         ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.create();
         s3 = S3Client.builder().region(Region.of(region)).credentialsProvider(credentialsProvider).build();
     }
@@ -87,16 +99,11 @@ public class FileServiceImpl<fileRepository> implements FileService {
                             });
                         }
                 ).map(map -> {
-
-            // TODO
-            // case 1 when user upload the same file, by name, size, extension (we need to do something)
-            // case 2 if file is good, just upload to s3.
-            //
             File file = new File();
             String fileName = map.get("name");
             String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
             file.setFileName(fileName);
-            //TODO implement twitter snowflake id generation
+            file.setExtension(extension);
             file.setId(idGenerator.nextId());
             file.setTags(Arrays.asList("lifestyle", "travel"));
             file.setKey(map.get("key"));
@@ -104,22 +111,37 @@ public class FileServiceImpl<fileRepository> implements FileService {
             file.setShared(false);
             file.setCreatedAt(LocalDateTime.now());
             file.setUserId(userId);
-            logger.debug("we get file {},with key {}", file.getFileName(), file.getKey());
             return file;
-            // TODO to save to disk, push to s3 and to db
         }).flatMap(
                 file -> fileRepository.save(file)
-//                    logger.debug("we are going to save a file {} into mongodb,with key {}", file.getFileName(), file.getKey());
-//
         ).map(file ->
-//            logger.debug("we have saved the file {} into mongodb,with key {}", file.getFileName(), file.getKey());
             file.getKey()
         );
     }
-
     @Override
     public Flux<File> find(Long userId, List<String> tags) {
         // todo currently it is not really exactly and correctly filtering by tags, e.g. lifestyle & coding, would return records that includes cooking. we need to investigate.
+        logger.debug("test tags {}", tags);
         return tags.isEmpty()? fileRepository.findByUserId(userId):fileRepository.findByUserIdAndTagsIn(userId,tags);
+    }
+
+    @Override
+    public Mono<Void> update(Long userId, Long fileId, UpdateFile updateFile) {
+        return fileRepository.findById(fileId).filter(file -> file.getUserId().equals(userId)
+        ).switchIfEmpty(Mono.error(new ItemNotFoundException("update file failed"))).flatMap(file -> {
+            logger.debug("file {}",file);
+             BeanUtils.copyProperties(updateFile,file);
+            // TODO handle exception in global way, deal with failed saving of file.
+             return fileRepository.save(file).then();
+        });
+    }
+
+    @Override
+    public Mono<Void> delete(Long userId, Long fileId) {
+        return fileRepository.findById(fileId).filter(file -> file.getUserId().equals(userId)
+        ).switchIfEmpty(Mono.error(new ItemNotFoundException("delete file failed"))).flatMap(file -> {
+            // TODO handle exception in global way, deal with failed saving of file.
+            return fileRepository.delete(file).then();
+        });
     }
 }
